@@ -365,30 +365,47 @@ function coletarDados() {
   return { nome, jogos: dados };
 }
 
+function limparNome(s) {
+  var resultado = '';
+  var i = 0;
+  while (i < s.length) {
+    var code = s.codePointAt(i);
+    var isFlag = (code >= 0x1F1E0 && code <= 0x1F1FF);
+    var isTag = (code >= 0xE0000 && code <= 0xE007F);
+    var isBlack = (code === 0x1F3F4);
+    var isCancelTag = (code === 0xE007F);
+    if (!isFlag && !isTag && !isBlack && !isCancelTag) {
+      resultado += s[i];
+      if (code > 0xFFFF) i++;
+    } else {
+      if (code > 0xFFFF) i++;
+    }
+    i++;
+  }
+  return resultado.trim();
+}
+
 function montarTexto(dados) {
-  const total = dados.jogos.filter(j => j.preenchido).length;
-  const porRodada = { '1': [], '2': [], '3': [] };
-  dados.jogos.forEach(j => { if (j.preenchido) porRodada[j.rodada].push(j); });
+  var total = dados.jogos.filter(function(j) { return j.preenchido; }).length;
+  var porRodada = { '1': [], '2': [], '3': [] };
+  dados.jogos.forEach(function(j) { if (j.preenchido) porRodada[j.rodada].push(j); });
+  var nomeRodada = { '1': '1ª Rodada', '2': '2ª Rodada', '3': '3ª Rodada' };
 
-  const nomeRodada = { '1': '1ª Rodada', '2': '2ª Rodada', '3': '3ª Rodada' };
-
-  let txt = `🏆 Bolão Copa 2026 — ${dados.nome}\n\n`;
+  var txt = '🏆 Bolão Copa 2026 — ' + dados.nome + '\n\n';
 
   if (total === 0) {
-    txt += `Nenhum palpite preenchido ainda.`;
+    txt += 'Nenhum palpite preenchido ainda.';
     return txt;
   }
 
-  ['1','2','3'].forEach(r => {
-    const lista = porRodada[r];
+  ['1','2','3'].forEach(function(r) {
+    var lista = porRodada[r];
     if (!lista.length) return;
-    txt += `*${nomeRodada[r]}*\n`;
-    lista.forEach(j => {
-      // extrai só o nome sem emoji de bandeira
-      const limpar = s => s.replace(/\p{RGI_Emoji_Flag_Sequence}/gu, '').replace(/🏴󠁧󠁢󠁥󠁮󠁧󠁿|🏴󠁧󠁢󠁳󠁣󠁴󠁿|🏴󠁧󠁢󠁷󠁬󠁳󠁿/g, '').trim();
-      txt += `${limpar(j.ta)} ${j.g1}×${j.g2} ${limpar(j.tb)}\n`;
+    txt += '*' + nomeRodada[r] + '*\n';
+    lista.forEach(function(j) {
+      txt += limparNome(j.ta) + ' ' + j.g1 + 'x' + j.g2 + ' ' + limparNome(j.tb) + '\n';
     });
-    txt += `\n`;
+    txt += '\n';
   });
 
   return txt.trim();
