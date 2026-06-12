@@ -27,30 +27,31 @@
   header h1 { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 2px; line-height: 1.1; }
   header .sub { font-size: 0.8rem; opacity: 0.85; margin-top: 4px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
 
-  .campo-nome {
-    display: flex; gap: 8px; margin: 12px auto 0; max-width: 360px;
+  .card-participante {
+    background: white; margin: 0 12px; padding: 16px;
+    border-radius: 0 0 12px 12px; border-top: 3px solid var(--amarelo);
+    display: flex; flex-direction: column; gap: 10px;
+    max-width: 676px; margin-left: auto; margin-right: auto;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   }
-  .campo-nome input {
-    flex: 1; padding: 9px 12px; border-radius: 8px; border: 2px solid rgba(255,255,255,0.3);
-    background: rgba(255,255,255,0.15); color: white; font-size: 0.9rem;
-    font-family: 'Inter', sans-serif; outline: none;
+  .label-nome { font-size: 0.75rem; font-weight: 700; color: #555; text-transform: uppercase; letter-spacing: 1px; }
+  .input-nome {
+    width: 100%; padding: 11px 14px; border-radius: 8px;
+    border: 2px solid var(--borda); font-size: 1rem; font-family: 'Inter', sans-serif;
+    color: var(--texto); outline: none;
   }
-  .campo-nome input::placeholder { color: rgba(255,255,255,0.6); }
-  .campo-nome input:focus { border-color: var(--amarelo); }
+  .input-nome:focus { border-color: var(--verde-claro); }
 
   /* BOTÃO COMPARTILHAR */
   .btn-wpp {
     display: flex; align-items: center; justify-content: center; gap: 8px;
-    width: calc(100% - 24px); max-width: 500px; margin: 14px auto 0;
-    padding: 13px 20px; border-radius: 12px;
+    width: 100%; padding: 13px 20px; border-radius: 10px;
     background: #25D366; color: white; font-weight: 700; font-size: 0.95rem;
     border: none; cursor: pointer; font-family: 'Inter', sans-serif;
-    box-shadow: 0 4px 14px rgba(37,211,102,0.35);
-    transition: opacity 0.2s;
+    box-shadow: 0 3px 10px rgba(37,211,102,0.3);
   }
-  .btn-wpp:active { opacity: 0.85; }
-  .btn-wpp svg { width: 22px; height: 22px; fill: white; flex-shrink: 0; }
   .btn-wpp:active { opacity: 0.8; }
+  .btn-wpp svg { width: 20px; height: 20px; fill: white; flex-shrink: 0; }
 
   .legenda {
     background: white; border-left: 4px solid var(--amarelo);
@@ -179,14 +180,16 @@
 <header>
   <h1>🏆 Bolão Copa do Mundo 2026</h1>
   <div class="sub">Fase de Grupos — 15 a 27 de Junho</div>
-  <div class="campo-nome">
-    <input type="text" id="nomeParticipante" placeholder="Seu nome para o bolão..." maxlength="30">
-  </div>
+</header>
+
+<div class="card-participante">
+  <label class="label-nome" for="nomeParticipante">Seu nome</label>
+  <input type="text" id="nomeParticipante" class="input-nome" placeholder="Digite seu nome..." maxlength="30" autocomplete="off">
   <button class="btn-wpp" id="btnCompartilhar" onclick="abrirModal()">
     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-    Compartilhar resultado no WhatsApp
+    Compartilhar no WhatsApp
   </button>
-</header>
+</div>
 
 <div class="legenda">
   <span>💚 <strong>Resultado exato</strong> = 3 pts</span>
@@ -367,36 +370,28 @@ function montarTexto(dados) {
   const porRodada = { '1': [], '2': [], '3': [] };
   dados.jogos.forEach(j => { if (j.preenchido) porRodada[j.rodada].push(j); });
 
-  const nomeRodada = {
-    '1': '1ª RODADA (15–17/06)',
-    '2': '2ª RODADA (18–23/06)',
-    '3': '3ª RODADA (24–27/06)'
-  };
+  const nomeRodada = { '1': '1ª Rodada', '2': '2ª Rodada', '3': '3ª Rodada' };
 
-  let txt = `🏆 *BOLÃO COPA DO MUNDO 2026* ⚽\n`;
-  txt += `👤 *${dados.nome}*\n`;
-  txt += `📊 ${total} palpite${total !== 1 ? 's' : ''} preenchido${total !== 1 ? 's' : ''}\n`;
-  txt += `${'─'.repeat(30)}\n`;
+  let txt = `🏆 Bolão Copa 2026 — ${dados.nome}\n\n`;
 
   if (total === 0) {
-    txt += `\nNenhum palpite preenchido ainda.`;
+    txt += `Nenhum palpite preenchido ainda.`;
     return txt;
   }
 
   ['1','2','3'].forEach(r => {
     const lista = porRodada[r];
     if (!lista.length) return;
-    txt += `\n⚽ *${nomeRodada[r]}*\n`;
+    txt += `*${nomeRodada[r]}*\n`;
     lista.forEach(j => {
-      const taLimpo = j.ta.replace(/[\u{1F1E0}-\u{1F1FF}]|[\u{1F3F4}]/gu, '').trim();
-      const tbLimpo = j.tb.replace(/[\u{1F1E0}-\u{1F1FF}]|[\u{1F3F4}]/gu, '').trim();
-      txt += `${j.ta.match(/(\p{Emoji_Presentation}|\p{Extended_Pictographic})/u)?.[0] || ''} ${taLimpo}  *${j.g1} × ${j.g2}*  ${j.tb.match(/(\p{Emoji_Presentation}|\p{Extended_Pictographic})/u)?.[0] || ''} ${tbLimpo}  _(${j.grupo})_\n`;
+      // extrai só o nome sem emoji de bandeira
+      const limpar = s => s.replace(/\p{RGI_Emoji_Flag_Sequence}/gu, '').replace(/🏴󠁧󠁢󠁥󠁮󠁧󠁿|🏴󠁧󠁢󠁳󠁣󠁴󠁿|🏴󠁧󠁢󠁷󠁬󠁳󠁿/g, '').trim();
+      txt += `${limpar(j.ta)} ${j.g1}×${j.g2} ${limpar(j.tb)}\n`;
     });
+    txt += `\n`;
   });
 
-  txt += `\n${'─'.repeat(30)}\n`;
-  txt += `🌎 EUA · Canadá · México 2026`;
-  return txt;
+  return txt.trim();
 }
 
 let textoAtual = '';
